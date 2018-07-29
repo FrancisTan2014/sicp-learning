@@ -1,0 +1,22 @@
+(define (cube x)
+    (define (cubic n) (* n n n))
+    (define (abs n) (if (< n 0) (- n) n))
+    (define (good-enough? guess) 
+        (< (abs (- (cubic guess) x))
+           0.000001
+        )
+    )
+    (define (improve guess)
+        (/  (+ (/ x (* guess guess))
+               (* 2 guess))
+            3
+        )
+    )
+    (define (cube-iter guess x)
+        (if (good-enough? guess)
+            guess
+            (cube-iter (improve guess) x)
+        )
+    )
+    (cube-iter (/ x 3.0) x)
+)

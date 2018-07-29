@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <button class="btn">点击打开弹出框</button>
+
+    <div class="alert" style="width: 300px; height: 200px; background: black; color: #fff; display: none;">
+        <h2 class="title"></h2>
+        <div class="content"></div>
+        <div class="footer">
+            <button class="confirm">确定</button>
+        </div>
+    </div>
+    
+    <script>
+        // alert(1) // 会阻塞线程，导致后面的代码不能运行
+        // console.log(1111)
+        window.$alert = function (msg, title, callback) {
+            let $div = document.getElementsByClassName('alert')[0]
+            let $title = $div.getElementsByClassName('title')[0]
+            let $content = $div.getElementsByClassName('content')[0]
+            let $confirm = $div.getElementsByClassName('confirm')[0]
+            
+            $title.innerHTML = title
+            $content.innerHTML = msg
+            $confirm.addEventListener('click', function () {
+                $div.style.display = 'none'
+                if (typeof callback === 'function') {
+                    callback()
+                }
+            })
+            $div.style.display = 'block'
+        }
+
+        let $btn = document.getElementsByClassName('btn')[0]
+        $btn.addEventListener('click', function () {
+            window.$alert('测试，弹出框管不管用', '这是标题，看清楚咯', function () {
+                alert('你点击了确定之后，才会执行的操作')
+            })
+        })
+    </script>
+</body>
+</html>
