@@ -1,10 +1,10 @@
 #lang racket
 
-(define (sum term a nekt b)
+(define (sum term a next b)
     (if (> a b)
         0
         (+ (term a)
-           (sum term (nekt a) nekt b))))
+           (sum term (next a) next b))))
 
 (define (inc x) (+ x 1))
 (define (cube x) (* x x x))
