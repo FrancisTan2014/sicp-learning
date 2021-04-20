@@ -21,7 +21,7 @@
 (define (square x) (* x x))
 (define (inc x) (+ x 1))
 
-(define size 100000000)
+(define size 10000000)
 
 (define (measure p)
     (define start (current-inexact-milliseconds))
