@@ -25,6 +25,7 @@
                   (iter (+ i 1))))))
     (iter 1))
 
+; iterative version 1
 (define (cont-frac-i n d k)
     ; iterate from the bottom to the top
     ; after each step, we make the fomula
@@ -38,6 +39,16 @@
                                           denom))))))
     (/ (n 1)
        (accurate-denom k (d k))))
+
+; iterative version 2
+(define (cont-frac-i-2 n d k)
+    (define (iter i result)
+        (if (= i 0)
+            result
+            (iter (- i 1)
+                  (/ (n i)
+                     (+ (d i) result)))))
+    (iter k 0))
 
 (define (power x y)
     (define (iter i result)
@@ -53,7 +64,7 @@
     (< (abs (* (- x y) (power 10 d)))
        1.0))
 
-(define cont-frac cont-frac-i)
+(define cont-frac cont-frac-i-2)
 (define phi-1 (/ 1 (phi)))
 (define (cont-frac-1 k) 
     (cont-frac (lambda (x) 1.0)
