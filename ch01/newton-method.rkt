@@ -1,17 +1,9 @@
 #lang racket
 
-; fixed point definition
-(define tolerance .00001)
-(define (fixed-point f first-guess)
-    (define (close-enough? v1 v2)
-        (< (abs (- v1 v2))
-           tolerance))
-    (define (try guess)
-        (let ((next (f guess)))
-            (if (close-enough? guess next)
-                guess
-                (try next))))
-    (try first-guess))
+(require "fixed-point.rkt")
+
+(provide newton-method
+         newton-transform)
 
 ; newton's method deriving
 (define dx .00001)
