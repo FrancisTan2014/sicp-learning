@@ -3,6 +3,8 @@
 ; Rewrite the sum procedure to make
 ; it performe iteratively.
 
+(require "../base/tools.rkt")
+
 (define (sum-r term a next b)
     (if (> a b)
         0
@@ -22,15 +24,6 @@
 (define (inc x) (+ x 1))
 
 (define size 10000000)
-
-(define (measure p)
-    (define start (current-inexact-milliseconds))
-    (define result (p))
-    (define end (current-inexact-milliseconds))
-    (fprintf (current-output-port)
-             "result: ~s ellapsed: ~sms\n"
-             result
-             (- end start)))
 
 (measure (lambda () (sum-r identity 1 inc size)))
 (measure (lambda () (sum-i identity 1 inc size)))
