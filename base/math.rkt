@@ -6,7 +6,9 @@
 (define (cube x) (* x x x))
 (define (abs x) (if (< x 0) (- x) x))
 (define (1+ x) (+ x 1))
+(define inc 1+)
 (define (-1+ x) (- x 1))
+(define dec -1+)
 
 (module+ test
   (require rackunit)
