@@ -14,10 +14,12 @@
                 (try next))))
     (try first-guess))
 
-(fixed-point cos 1.0)
-(fixed-point sin 1.0)
-(fixed-point (lambda (x) (+ (sin x) (cos x)))
-                            1.0)
+(module+ main
+    (fixed-point cos 1.0)
+    (fixed-point sin 1.0)
+    (fixed-point (lambda (x) (+ (sin x) (cos x)))
+                                1.0))
+
 (define (average a b) 
     (/ (+ a b)
        2))
@@ -28,10 +30,12 @@
     (fixed-point (average-damp (lambda (y) (/ x y)))
                  1.0))
                 
-(sqrt 2)
+
 
 (define (cube-root x)
     (fixed-point (average-damp (lambda (y) (/ x (* y y))))
                  1.0))
 
-(cube-root 3)
+(module+ main
+    (sqrt 2)
+    (cube-root 3))
