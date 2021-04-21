@@ -3,6 +3,8 @@
 (require "../base/math.rkt"
          "ex1.42.rkt")
 
+(provide repeated)
+
 (define (repeated f n)
     (define (iter i result)
         (if (> i n)
