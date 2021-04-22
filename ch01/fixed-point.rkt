@@ -1,9 +1,10 @@
 #lang racket
 
-(provide fixed-point)
+(provide fixed-point
+         average-damp)
 
-(define tolerance .00001)
-(define (fixed-point f first-guess)
+(define default-tolerance .00001)
+(define (fixed-point f first-guess [tolerance default-tolerance])
     (define (close-enough? v1 v2)
         (< (abs (- v1 v2))
            tolerance))
