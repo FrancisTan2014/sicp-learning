@@ -1,0 +1,30 @@
+#lang racket
+
+(define (make-rat n d)
+    (define (>= x y) (or (> x y) (= x y)))
+    (let ((g (abs (gcd n d)))
+          (both-neg (and (< n 0) (< d 0)))
+          (both-pos (and (>= n 0) (>= d 0)))
+          (an (abs n))
+          (ad (abs d)))
+        (if (or both-neg both-pos)
+            (cons (/ an g) (/ ad g))
+            (cons (/ (* -1 an) g) (/ ad g)))))
+
+(define (numer r) (car r))
+(define (denom r) (cdr r))
+
+(module+ test
+    (require rackunit)
+    (let ((r (make-rat 3 -4)))
+        (check-eq? (numer r) -3)
+        (check-eq? (denom r) 4))
+    (let ((r (make-rat 3 4)))
+        (check-eq? (numer r) 3)
+        (check-eq? (denom r) 4))
+    (let ((r (make-rat -3 -4)))
+        (check-eq? (numer r) 3)
+        (check-eq? (denom r) 4))
+    (let ((r (make-rat -3 4)))
+        (check-eq? (numer r) -3)
+        (check-eq? (denom r) 4)))
