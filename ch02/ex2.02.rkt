@@ -1,5 +1,7 @@
 #lang racket
 
+(provide (all-defined-out))
+
 ; top layer
 (define (midpoint-segment line)
     (midpoint (start-point line)
