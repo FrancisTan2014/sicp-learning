@@ -2,7 +2,7 @@
 
 (require "ex2.02.rkt")
 
-; top level
+; top layer
 ; (define (perimeter rect)
 ;     (* (+ (len rect)
 ;           (wid rect))
