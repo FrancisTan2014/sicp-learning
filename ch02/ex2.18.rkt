@@ -1,5 +1,7 @@
 #lang racket
 
+(provide (all-defined-out))
+
 (define (reverse l)
     (define (iter rest result)
         (if (null? rest)
