@@ -1,5 +1,7 @@
 #lang racket
 
+(provide (all-defined-out))
+
 (define (fold-left op initial seq)
     (if (null? seq)
         initial
