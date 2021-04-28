@@ -28,7 +28,6 @@
   (check-eq? (power-pos 3 4) 81)
   (check-eq? (power-pos 3 5) 243))
 
-
 (module+ test
   (require rackunit)
   (check-eq? (square 2) 4)

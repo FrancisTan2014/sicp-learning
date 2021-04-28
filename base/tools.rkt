@@ -10,3 +10,6 @@
              "result: ~s ellapsed: ~sms\n"
              result
              (- end start)))
+
+(define (testing-methods methods data)
+    (map (lambda (m) (m data) (newline)) methods))
