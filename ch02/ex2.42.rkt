@@ -111,5 +111,6 @@
         (let ([board-2 (adjoin-position 3 2 board-1)])
             (check-false (safe? 3 board-2)))))
 
+(define (length seq) (accumulate (lambda (x y) (+ 1 y)) 0 seq))
 (module+ main
-    (queens 8))
+    (length (queens 8)))
