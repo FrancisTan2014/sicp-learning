@@ -2,11 +2,13 @@
 
 (require "../base/math.rkt")
 
+(provide (all-defined-out))
+
 (define (for-each action l)
     (define (iter l)
-        (cond ((null? l) #t)
-              (else (action (car l))
-                    (iter (cdr l)))))
+        (cond ((not (null? l))
+                (action (car l))
+                (iter (cdr l)))))
     (iter l))
 
 (module+ main
