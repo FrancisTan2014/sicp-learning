@@ -67,9 +67,16 @@
 (define (flip-vert painter)
     (transform-painter 
         painter 
-        (make-vect 1 1)
         (make-vect 0 1)
-        (make-vect 1 0)))
+        (make-vect 1 1)
+        (make-vect 0 0)))
+
+(define (flip-horiz painter)
+    (transform-painter
+        painter
+        (make-vect 1 0)
+        (make-vect 0 0)
+        (make-vect 1 1)))
 
 (define (shrink-to-upper-right painter)
     (transform-painter
@@ -124,12 +131,45 @@
                 (paint-top frame)
                 (paint-bottom frame)))))
 
+(define (right-split painter n)
+    (if (= n 0)
+        painter
+        (let ([smaller (right-split painter (- n 1))])
+            (beside painter (below smaller smaller)))))
+
+(define (up-split painter n)
+    (if (= n 0)
+        painter
+        (let ([smaller (up-split painter (- n 1))])
+            (below (beside smaller smaller) painter))))
+
+(define (corner-split painter n)
+    (if (= n 0)
+        painter
+        (let ([up (up-split painter (- n 1))]
+              [right (right-split painter (- n 1))])
+            (let ([top-left (beside up up)]
+                  [bottom-right (below right right)]
+                  [corner (corner-split painter (- n 1))])
+                (below (beside top-left corner)
+                       (beside painter bottom-right))))))
+
+(define (square-limit painter n)
+    (let ([quarter (corner-split painter n)])
+        (let ([half (beside (flip-horiz quarter) quarter)])
+            (below half (flip-vert half)))))
+
 (module+ main
     ; (wave window)
     ; ((flip-vert wave) window)
+    ; ((flip-horiz wave) window)
     ; ((shrink-to-upper-right wave) window)
     ; ((rotate90 wave) window)
     ; ((squash-inwards wave) window)
-    ((beside wave wave) window)
+    ; ((beside wave wave) window)
     ; ((below wave wave) window)
+    ; ((right-split wave 6) window)
+    ; ((up-split wave 6) window)
+    ; ((corner-split wave 4) window)
+    ((square-limit wave 4) window)
     )
