@@ -2,9 +2,11 @@
 
 (require "ex2.46.rkt")
 
-(define (make-segment start end) (cons start end))
+(provide (all-defined-out))
+
+(define (make-segment start end) (list start end))
 (define (start-segment segment) (car segment))
-(define (end-segment segment) (cdr segment))
+(define (end-segment segment) (car (cdr segment)))
 (define (mid-segment segment)
     (scale-vect (/ 1 2)
                 (add-vect (start-segment segment)

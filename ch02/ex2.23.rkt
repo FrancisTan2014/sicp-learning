@@ -1,14 +1,12 @@
 #lang racket
 
-(require "../base/math.rkt")
-
 (provide (all-defined-out))
 
 (define (for-each action l)
-    (define (iter l)
-        (cond ((not (null? l))
-                (action (car l))
-                (iter (cdr l)))))
+    (define (iter rest)
+        (cond ((not (null? rest))
+                (action (car rest))
+                (iter (cdr rest)))))
     (iter l))
 
 (module+ main
