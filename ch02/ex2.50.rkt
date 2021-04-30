@@ -5,6 +5,8 @@
     "wave.rkt"
     "picture-language.rkt")
 
+(provide (all-defined-out))
+
 (define (flip-horiz painter degree)
     (let ([a (make-vect 0 0)]
             [b (make-vect 0 1)]
