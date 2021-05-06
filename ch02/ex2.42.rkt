@@ -1,0 +1,116 @@
+#lang racket
+
+; eight-queens puzzle
+
+(require "sequence-operations.rkt")
+
+(define (flatmap proc seq)
+    (accumulate append '() (map proc seq)))
+
+(define (queens board-size)
+    (define (queen-cols k)
+        (if (= k 0)
+            (list (empty-board board-size))
+            (filter (lambda (positions) (safe? k positions))
+                    (flatmap (lambda (rest-of-queens)
+                                (map (lambda (new-row)
+                                        (adjoin-position new-row k rest-of-queens))
+                                     (enumerate-interval 1 board-size)))
+                             (queen-cols (- k 1))))))
+    (queen-cols board-size))
+
+(define (empty-board n)
+    (make-board n))
+
+(define (adjoin-position new-row k rest-of-queens)
+    (set-queen new-row k rest-of-queens))
+
+(define (set-queen row col board)
+    (accumulate (lambda (cell rest-cells)
+                    (if (is-coor? cell row col)
+                        (cons (make-cell row col #t)
+                              rest-cells)
+                        (cons cell rest-cells)))
+                '()
+                board))
+
+(define (can-attack? c1 c2)
+    (or (same-row? c1 c2) ; at the same row
+        (= (- (get-row c1) (get-row c2))
+           (- (get-col c1) (get-col c2))) ; c2 is at left-above c1
+        (= (- (get-row c2) (get-row c1))
+           (- (get-col c1) (get-col c2))))) ; c2 is at left-blow c1
+
+(define (safe? col board)
+    (let ([queen (car (filter (lambda (c) (and (= (get-col c) col)
+                                               (has-queen? c)))
+                              board))]
+          [left-cols (filter (lambda (c) (< (get-col c) col))
+                             board)])
+        (define (safe-iter rest)
+            (cond ((null? rest) #t)
+                  ((and (can-attack? queen (car rest))
+                        (has-queen? (car rest)))
+                    #f)
+                  (else (safe-iter (cdr rest)))))
+        (safe-iter left-cols)))
+
+(define (is-coor? cell row col)
+    (and (= (get-row cell) row)
+         (= (get-col cell) col)))
+
+(define (same-row? c1 c2)
+    (= (get-row c1) (get-row c2)))
+(define (same-col? c1 c2)
+    (= (get-col c1) (get-col c2)))
+(define (make-board n)
+    (flatmap (lambda (r)
+                (map (lambda (c) (make-cell r c #f))
+                     (enumerate-interval 1 n)))
+             (enumerate-interval 1 n)))
+(define (make-cell row col has-queen?) (list col row has-queen?)) ; CAUTION: the row number is the y-coordinate
+(define (get-row cell) (car (cdr cell)))
+(define (get-col cell) (car cell))
+(define (has-queen? cell) (car (cddr cell)))
+
+(module+ test
+    (require rackunit)
+    (let ([cell (make-cell 1 2 #t)])
+        (check-eq? (get-row cell) 1)
+        (check-eq? (get-col cell) 2)
+        (check-true (has-queen? cell)
+        (check-false (has-queen? (make-cell 0 0 #f)))))
+    (check-true (same-row? (make-cell 1 2 #t) (make-cell 1 3 #t)))
+    (check-true (not (same-row? (make-cell 1 2 #t) (make-cell 2 3 #t))))
+    (check-true (same-col? (make-cell 2 2 #t) (make-cell 1 2 #t)))
+    (check-true (not (same-col? (make-cell 3 2 #t) (make-cell 2 3 #t))))
+    (check-true (is-coor? (make-cell 2 3 #t) 2 3))
+    (let ([queen (make-cell 2 3 #t)])
+        (check-true (can-attack? queen (make-cell 2 2 #t)))
+        (check-true (can-attack? queen (make-cell 2 1 #t)))
+        (check-true (can-attack? queen (make-cell 1 2 #t)))
+        (check-true (can-attack? queen (make-cell 3 2 #t)))
+        (check-true (can-attack? queen (make-cell 4 1 #t)))
+        (check-false (can-attack? queen (make-cell 1 1 #t)))
+        (check-false (can-attack? queen (make-cell 3 1 #t)))
+        (check-false (can-attack? queen (make-cell 5 1 #t)))
+        (check-false (can-attack? queen (make-cell 6 1 #t)))
+        (check-false (can-attack? queen (make-cell 7 1 #t)))
+        (check-false (can-attack? queen (make-cell 8 1 #t)))
+        (check-false (can-attack? queen (make-cell 4 2 #t)))
+        (check-false (can-attack? queen (make-cell 5 2 #t)))
+        (check-false (can-attack? queen (make-cell 6 2 #t)))
+        (check-false (can-attack? queen (make-cell 7 2 #t)))
+        (check-false (can-attack? queen (make-cell 8 2 #t))))
+    (let ([board-1 (adjoin-position 2 3 (make-board 8))])
+        (check-true (safe? 3 board-1))
+        (let ([board-2 (adjoin-position 2 2 board-1)])
+            (check-false (safe? 3 board-2)))
+        (let ([board-2 (adjoin-position 1 2 board-1)])
+            (check-false (safe? 3 board-2)))
+        (let ([board-2 (adjoin-position 3 2 board-1)])
+            (check-false (safe? 3 board-2)))))
+
+(define (length seq) (accumulate (lambda (x y) (+ 1 y)) 0 seq))
+(module+ main
+    (length (queens 8)))

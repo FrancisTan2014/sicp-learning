@@ -1,3 +1,5 @@
+#lang racket
+
 ; (define (fib n)
 ;     (define (iter a b counter)
 ;         (if (= counter 1)
@@ -6,6 +8,8 @@
 ;                   sum
 ;                   (+ b 1))))
 ;     (iter 1 0 1))
+
+(provide fib)
 
 (define (fib n)
     (fib-iter 1 0 n))
