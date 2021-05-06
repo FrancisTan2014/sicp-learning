@@ -1,6 +1,6 @@
 #lang racket
 
-(require "set.rkt")
+(require "unordered-set.rkt")
 
 (define (union-set set1 set2)
     (cond ((null? set1) set2)
