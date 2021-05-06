@@ -1,6 +1,6 @@
 #lang racket
 
-(require "ordered-set.rkt"
+(require "set-ordered.rkt"
          "ex2.18.rkt")
 
 (define (adjoin-set o set)
