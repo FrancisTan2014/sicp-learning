@@ -3,6 +3,8 @@
 (require "huffman-tree.rkt"
          "ex2.68.rkt")
 
+(provide generate-huffman-tree)
+
 ; generate a huffman tree with given pairs
 (define (generate-huffman-tree pairs)
     (successive-merge (make-leaf-set pairs)))
