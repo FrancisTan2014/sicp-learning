@@ -40,3 +40,17 @@
               ((= bit 1) (right-branch branch))
               (else (error "bad bit: CHOOSE-BRANCH" bit))))
     (lookup bits tree))
+
+; huffman tree generating
+(define (adjoin-set x set)
+    (cond ((null? set) (list x))
+          ((< (weight x) (weight (car set))) (cons x set))
+          (else (cons (car set)
+                      (adjoin-set x (cdr set))))))
+
+(define (make-leaf-set pairs)
+    (if (null? pairs)
+        '()
+        (adjoin-set (make-leaf (caar pairs)
+                               (cadar pairs))
+                    (make-leaf-set (cdr pairs)))))

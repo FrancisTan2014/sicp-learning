@@ -3,6 +3,8 @@
 (require "huffman-tree.rkt"
          "ex2.18.rkt")
 
+(provide encode)
+
 (define (encode message tree)
     (if (null? message)
         '()
