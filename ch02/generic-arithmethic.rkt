@@ -8,7 +8,8 @@
 (provide
     install-complex-package
     install-rational-package
-    install-scheme-number-package)
+    install-scheme-number-package
+    install-arithmethic-packages)
 
 (define (attach-tag type-tag contents) 
     (cons type-tag contents))
@@ -115,6 +116,12 @@
         (lambda (x y) (tag (/ x y))))
     (put 'make 'scheme-number
         (lambda (x) (tag x)))
+    'done)
+
+(define (install-arithmethic-packages)
+    (install-complex-package)
+    (install-rational-package)
+    (install-scheme-number-package)
     'done)
 
 (module+ main
