@@ -18,8 +18,8 @@
     (define (equ-complex? x y)
         (let ([real-part (lambda (z) (apply-generic 'real-part z))]
               [imag-part (lambda (z) (apply-generic 'imag-part z))])
-            (and (= (real-part x) (real-part y))
-                 (= (imag-part x) (imag-part y)))))
+            (and (apply-generic 'equ? (real-part x) (real-part y))
+                 (apply-generic 'equ? (imag-part x) (imag-part y)))))
 
     (put 'equ? '(scheme-number scheme-number) equ-ordinary?)
     (put 'equ? '(rational rational) equ-rational?)

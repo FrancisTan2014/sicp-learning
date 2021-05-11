@@ -1,8 +1,7 @@
 
 #lang racket
 
-(require "../base/math.rkt"
-         "get-put.rkt"
+(require "get-put.rkt"
          "complex-number-additive.rkt")
 
 (define (attach-tag type-tag contents)
