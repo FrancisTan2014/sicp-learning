@@ -2,6 +2,7 @@
 
 (provide 
     create-storage
+    storage
     put
     get)
 
@@ -36,9 +37,11 @@
                             (get-item first)
                             (find (cdr list))))))
             (find table))
+        (define (list-all) table)
         (lambda (m . args)
             (cond ((eq? m 'put) (apply put args))
-                  ((eq? m 'get) (apply get args))))))
+                  ((eq? m 'get) (apply get args))
+                  ((eq? m 'list) (apply list-all args))))))
 
 (define storage (create-storage))
 (define (put op type item) (storage 'put op type item))
