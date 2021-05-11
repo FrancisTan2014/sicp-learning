@@ -4,7 +4,9 @@
     "get-put.rkt"
     "ex2.78.rkt")
 
-(provide install-zero-package)
+(provide 
+    install-zero-package
+    =zero?)
 
 (define (install-zero-package)
     (define (=zero-ordinary? x) (= x 0))
@@ -22,12 +24,13 @@
     (put '=zero? '(complex) =zero-complex?)
     'done)
 
+(define (=zero? x) (apply-generic '=zero? x))
+
 (module+ test
     (require rackunit)
     (install-arithmethic-packages)
     (install-zero-package)
 
-    (define (=zero? x) (apply-generic '=zero? x))
     (check-true (=zero? 0))
     (check-false (=zero? 3))
 

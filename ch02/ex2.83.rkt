@@ -2,7 +2,8 @@
 
 (require 
     "get-put.rkt"
-    "ex2.78.rkt")
+    "ex2.78.rkt"
+    "ex2.79.rkt")
 
 (provide
     install-raise-package
@@ -13,19 +14,23 @@
         ((get 'make-rat 'rational) x 1))
     (define (rational->complex x)
         ((get 'make-from-real-imag 'complex) x 0))
-    (define (schema->complex x)
-        (rational->complex (scheme->rational x)))
 
     (put 'raise 'scheme-number scheme->rational)
-    (put 'raise 'complex schema->complex)
     (put 'raise 'rational rational->complex)
     'done)
 
-(define (raise x) ((get 'raise (type-tag x)) x))
+(define (raise x)
+    (let ([m (get 'raise (type-tag x))])
+        (if m
+            (m x)
+            (error 
+              "no method for these types: RAISE" 
+              (list 'raise (type-tag x))))))
 
 (module+ test
     (require rackunit)
     (install-arithmethic-packages)
+    (install-equal-package)
     (install-raise-package)
     (define (rational? x) 
         (and (not (number? x))
@@ -35,9 +40,16 @@
     (define (complex? x)
         (and (not (number? x))
              (eq? (type-tag x) 'complex)))
+    (define (real-part z)
+        ((get 'real-part 'complex) (contents z)))
+    (define (imag-part z)
+        ((get 'imag-part 'complex) (contents z)))
 
     (let ([r (raise 3)])
         (check-true (rational? r))
         (check-eq? (numer r) 3)
-        (check-eq? (denom r) 1))
-    )
+        (check-eq? (denom r) 1)
+        (let ([c (raise r)])
+            (check-true (complex? c))
+            (check-true (equ? (real-part c) r))
+            (check-eq? (imag-part c) 0))))

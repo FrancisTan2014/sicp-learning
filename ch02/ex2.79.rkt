@@ -4,7 +4,9 @@
     "get-put.rkt"
     "ex2.78.rkt")
 
-(provide install-equal-package)
+(provide 
+    install-equal-package
+    equ?)
 
 (define (install-equal-package)
     (define (equ-ordinary? x y) (= x y))
@@ -24,11 +26,11 @@
     (put 'equ? '(complex complex) equ-complex?)
     'done)
 
+(define (equ? x y) (apply-generic 'equ? x y))
+
 (module+ main
     (install-arithmethic-packages)
     (install-equal-package)
-
-    (define (equ? x y) (apply-generic 'equ? x y))
     (equ? 3 3)
 
     (define (make-rat n d) ((get 'make-rat 'rational) n d))
