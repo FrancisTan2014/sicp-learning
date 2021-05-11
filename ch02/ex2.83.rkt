@@ -7,7 +7,8 @@
 
 (provide
     install-raise-package
-    raise)
+    raise
+    can-raise?)
 
 (define (install-raise-package)
     (define (scheme->rational x)
@@ -26,6 +27,10 @@
             (error 
               "no method for these types: RAISE" 
               (list 'raise (type-tag x))))))
+
+(define (can-raise? x)
+    (let ([m (get 'raise (type-tag x))])
+        (if m #t #f)))
 
 (module+ test
     (require rackunit)
@@ -52,4 +57,5 @@
         (let ([c (raise r)])
             (check-true (complex? c))
             (check-true (equ? (real-part c) r))
-            (check-eq? (imag-part c) 0))))
+            (check-eq? (imag-part c) 0)
+            (check-false (can-raise? c)))))
