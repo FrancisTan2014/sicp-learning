@@ -11,13 +11,13 @@
     (put 'neg '(rational)
         (lambda (r)
             ((get 'make-rat 'rational)
-                (- ((get 'numer 'rational) (contents r)))
-                ((get 'denom 'rationa) (contents r)))))
+                (- ((get 'numer 'rational) r))
+                ((get 'denom 'rational) r))))
     (put 'neg '(complex)
         (lambda (c)
-            ((get 'make-from-real-imag)
-                (neg ((get 'real-part 'complex) (contents c)))
-                (neg ((get 'imag-part 'complex) (contents c))))))
+            ((get 'make-from-real-imag 'complex)
+                (neg ((get 'real-part 'complex) c))
+                (neg ((get 'imag-part 'complex) c)))))
     'done)
 
 (define (install-polynomial-package)
@@ -51,8 +51,8 @@
 
     (define (add-poly p1 p2)
         (if (same-variable? p1 p2)
-            (make-poly (add-terms (term-list p1) (term-list p2))
-                       (variable p1))
+            (make-poly (variable p1)
+                       (add-terms (term-list p1) (term-list p2)))
             (error 
                 "Polys not in same var: ADD-POLY"
                 (list p1 p2))))
@@ -66,8 +66,8 @@
 
     (define (mul-poly p1 p2)
         (if (same-variable? p1 p2)
-            (make-poly (mul-terms (term-list p1) (term-list p2))
-                       (variable p1))
+            (make-poly (variable p1)
+                       (mul-terms (term-list p1) (term-list p2)))
             (error 
                 "Polys not in same var: MUL-POLY"
                 (list p1 p2))))
@@ -125,9 +125,17 @@
     (install-arithmethic-packages)
     (install-negation-package)
     (install-polynomial-package)
+    (define make-rat (get 'make-rat 'rational))
+    (define make-complex (get 'make-from-real-imag 'complex))
+    (define p3 (make-poly 'x (list '(2 3) (list 1 (make-complex 2 3)) '(0 7))))
+    (define p4 (make-poly 'x (list '(4 1) (list 2 (make-rat 2 3)) (list 0 (make-complex 5 3)))))
+    (neg p4)
+    (add p3 p4)
+    (sub p3 p4)
+
     (define p1 (make-poly 'x '((5 1) (4 2) (2 3) (1 -2) (0 -5))))
     (define p2 (make-poly 'x '((100 1) (2 2) (0 1))))
-    (sub p1 p2)
     (add p1 p2)
+    (sub p1 p2)
     (mul p1 p2)
     )
