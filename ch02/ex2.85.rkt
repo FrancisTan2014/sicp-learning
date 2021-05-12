@@ -1,18 +1,20 @@
 #lang racket
 
 (require "get-put.rkt"
-         "complex-number-additive.rkt"
-         "ex2.83.rkt")
+         "complex-number-additive.rkt")
 
 (provide
     attach-tag
     type-tag
     contents
     apply-generic
+    equ?
+    =zero?
     install-arithmethic-packages
-    put-tower
-    get-order
-    install-project-package)
+    add
+    sub
+    mul
+    div)
 
 (define (install-project-package)
     (define (project-complex c)
@@ -290,19 +292,74 @@
 
 (define (equ? x y) (apply-generic 'equ? x y))
 
+(define (install-zero-package)
+    (define (=zero-ordinary? x) (= x 0))
+    (define (=zero-rational? x)
+        (let ([numer (get 'numer 'rational)])
+            (= (numer x) 0)))
+    (define (=zero-complex? x)
+        (let ([real-part (lambda (z) (apply-generic 'real-part z))]
+              [imag-part (lambda (z) (apply-generic 'imag-part z))])
+            (and (= (real-part x) 0)
+                 (= (imag-part x) 0))))
+
+    (put '=zero? '(scheme-number) =zero-ordinary?)
+    (put '=zero? '(rational) =zero-rational?)
+    (put '=zero? '(complex) =zero-complex?)
+    'done)
+
+(define (=zero? x) (apply-generic '=zero? x))
+
+
+(define (install-raise-package)
+    (define (scheme->rational x)
+        ((get 'make-rat 'rational) x 1))
+    (define (rational->complex x)
+        ((get 'make-from-real-imag 'complex) x 0))
+
+    (put 'raise 'scheme-number scheme->rational)
+    (put 'raise 'rational rational->complex)
+    'done)
+
+(define (raise x)
+    (let ([m (get 'raise (type-tag x))])
+        (if m
+            (m x)
+            (error 
+              "no method for these types: RAISE" 
+              (list 'raise (type-tag x))))))
+
+(module+ test
+    (require rackunit)
+    (install-arithmethic-packages)
+    (install-zero-package)
+
+    (check-true (=zero? 0))
+    (check-false (=zero? 3))
+
+    (define (make-rat n d) ((get 'make-rat 'rational) n d))
+    (check-true (=zero? (make-rat 0 1)))
+    (check-false (=zero? (make-rat 3 4)))
+    
+    (define (make-from-real-imag x y) ((get 'make-from-real-imag 'complex) x y))
+    (check-true (=zero? (make-from-real-imag 0 0)))
+    (check-false (=zero? (make-from-real-imag 3 4)))
+    )
+
 (define (install-arithmethic-packages)
     (install-rectangular-package)
     (install-polar-package)
     (install-complex-package)
     (install-rational-package)
     (install-scheme-number-package)
+    (install-raise-package)
+    (install-equal-package)
+    (install-zero-package)
+    (install-project-package)
     'done)
 
 (module+ main
     (install-arithmethic-packages)
-    (install-raise-package)
-    (install-equal-package)
-    (install-project-package)
     (define make-from-real-imag (get 'make-from-real-imag 'complex))
     (define make-from-mag-ang (get 'make-from-mag-ang 'complex))
     (define make-rat (get 'make-rat 'rational))
@@ -323,4 +380,5 @@
     (drop (make-from-real-imag 1 2))
     (drop (make-from-real-imag 1 0))
     (drop (make-from-real-imag (make-rat 2 1) 0))
+    (add (make-rat 2 3) (make-from-real-imag 2 3))
     )
