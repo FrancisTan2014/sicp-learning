@@ -24,16 +24,16 @@
 
     (define (add-poly p1 p2)
         (if (same-variable? p1 p2)
-            (make-poly (add-terms (term-list p1) (term-list p2))
-                       (variable p1))
+            (make-poly (variable p1)
+                       (add-terms (term-list p1) (term-list p2)))
             (error 
                 "Polys not in same var: ADD-POLY"
                 (list p1 p2))))
 
     (define (mul-poly p1 p2)
         (if (same-variable? p1 p2)
-            (make-poly (mul-terms (term-list p1) (term-list p2))
-                       (variable p1))
+            (make-poly (variable p1)
+                       (mul-terms (term-list p1) (term-list p2)))
             (error 
                 "Polys not in same var: MUL-POLY"
                 (list p1 p2))))
@@ -74,8 +74,10 @@
                                (mul (coff t1) (coff t2)))
                     (mul-term-by-all-terms t1 (rest-terms l))))))
     (define (tag p) (attach-tag 'polynomial p))
-    (put 'add '(polynomial polynomial) add-poly)
-    (put 'mul '(polynomial polynomial) mul-poly)
+    (put 'add '(polynomial polynomial) 
+        (lambda (p1 p2) (tag (add-poly p1 p2))))
+    (put 'mul '(polynomial polynomial)
+        (lambda (p1 p2) (tag (mul-poly p1 p2))))
     (put '=zero? '(polynomial) 
         (lambda (p) (empty-term-list? (term-list p))))
     (put 'make 'polynomial

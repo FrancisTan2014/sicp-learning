@@ -29,14 +29,14 @@
     (define (empty-term-list? l) (null? l))
     (define (the-empty-term-list) '())
     (define (ajoin-term term term-list)
-        (if (=zero? (coff term))
+        (if (=zero? (coeff term))
             term-list
             (cons term term-list)))
     (define (first-term terms) (car terms))
     (define (rest-terms terms) (cdr terms))
-    (define (make-term order coff) (list order coff))
+    (define (make-term order coeff) (list order coeff))
     (define (order t) (car t))
-    (define (coff t) (cadr t))
+    (define (coeff t) (cadr t))
     (define (=zero-poly? p) (empty-term-list? (term-list p)))
     (define (neg-poly p) 
         (if (=zero-poly? p)
@@ -46,7 +46,7 @@
                 (map
                     (lambda (t) (make-term 
                                     (order t) 
-                                    (neg (coff t))))
+                                    (neg (coeff t))))
                     (term-list p)))))
 
     (define (add-poly p1 p2)
@@ -89,7 +89,7 @@
                           (else
                            (ajoin-term
                              (make-term (order t1)
-                                        (add (coff t1) (coff t2)))
+                                        (add (coeff t1) (coeff t2)))
                              (add-terms (rest-terms l1) (rest-terms l2)))))))))
 
     (define (mul-terms l1 l2)
@@ -105,17 +105,21 @@
             (let ([t2 (first-term l)])
                 (ajoin-term
                     (make-term (add (order t1) (order t2))
-                               (mul (coff t1) (coff t2)))
+                               (mul (coeff t1) (coeff t2)))
                     (mul-term-by-all-terms t1 (rest-terms l))))))
 
     (define (tag p) (attach-tag 'polynomial p))
-    (put 'add '(polynomial polynomial) add-poly)
-    (put 'sub '(polynomial polynomial) sub-poly)
-    (put 'mul '(polynomial polynomial) mul-poly)
+    (put 'add '(polynomial polynomial) 
+        (lambda (p1 p2) (tag (add-poly p1 p2))))
+    (put 'sub '(polynomial polynomial)
+        (lambda (p1 p2) (tag (sub-poly p1 p2))))
+    (put 'mul '(polynomial polynomial)
+        (lambda (p1 p2) (tag (mul-poly p1 p2))))
     (put '=zero? '(polynomial) =zero-poly?)
     (put 'make 'polynomial
         (lambda (var terms) (tag (make-poly var terms))))
-    (put 'neg '(polynomial) neg-poly)
+    (put 'neg '(polynomial)
+        (lambda (p) (tag (neg-poly p))))
     'done)
 
 (define (make-poly var terms)
@@ -125,6 +129,27 @@
     (install-arithmethic-packages)
     (install-negation-package)
     (install-polynomial-package)
+
+    (define p5 
+        (make-poly 'x
+                   (list (list 2 (make-poly 'y '((1 1) (0 1))))
+                         (list 1 (make-poly 'y '((2 1) (0 1))))
+                         (list 0 (make-poly 'y '((1 1) (0 -1)))))))
+    (define p6
+        (make-poly 'x
+                   (list (list 1 (make-poly 'y '((1 1) (0 -2)))
+                         (list 0 (make-poly 'y '((3 1) (0 7))))))))
+
+    (add p5 p6)
+    (sub p5 p6)
+    (mul p5 p6)
+
+    (define p1 (make-poly 'x '((5 1) (4 2) (2 3) (1 -2) (0 -5))))
+    (define p2 (make-poly 'x '((100 1) (2 2) (0 1))))
+    (add p1 p2)
+    (sub p1 p2)
+    (mul p1 p2)
+
     (define make-rat (get 'make-rat 'rational))
     (define make-complex (get 'make-from-real-imag 'complex))
     (define p3 (make-poly 'x (list '(2 3) (list 1 (make-complex 2 3)) '(0 7))))
@@ -132,10 +157,4 @@
     (neg p4)
     (add p3 p4)
     (sub p3 p4)
-
-    (define p1 (make-poly 'x '((5 1) (4 2) (2 3) (1 -2) (0 -5))))
-    (define p2 (make-poly 'x '((100 1) (2 2) (0 1))))
-    (add p1 p2)
-    (sub p1 p2)
-    (mul p1 p2)
     )
